@@ -10,4 +10,9 @@ public class HelloController {
     public String index() {
         return "Hello Spring Boot";
     }
+
+    @GetMapping("/user")
+    public String userPage() {
+        return "only user can access thí page";
+    }
 }
