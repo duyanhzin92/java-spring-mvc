@@ -8,12 +8,6 @@ import org.springframework.context.ApplicationContext;
 public class LaptopshopApplication {
 
 	public static void main(String[] args) {
-		// SpringApplication.run(LaptopshopApplication.class, args);
-
-		ApplicationContext x = SpringApplication.run(LaptopshopApplication.class, args);
-		for (String s : x.getBeanDefinitionNames()) {
-			System.out.println(s);
-		}
+		SpringApplication.run(LaptopshopApplication.class, args);
 	}
-
 }
