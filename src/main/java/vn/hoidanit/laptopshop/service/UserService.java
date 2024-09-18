@@ -13,6 +13,10 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    public User getUserById(long id) {
+        return this.userRepository.findById(id);
+    }
+
     public List<User> getAllUsers() {
         return this.userRepository.findAll();
     }
@@ -24,5 +28,9 @@ public class UserService {
     public User handleSaveUser(User user) {
         User eric = this.userRepository.save(user);
         return eric;
+    }
+
+    public void deleteById(long id) {
+        this.userRepository.deleteById(id);
     }
 }
