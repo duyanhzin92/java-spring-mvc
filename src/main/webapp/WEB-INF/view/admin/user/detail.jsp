@@ -21,7 +21,7 @@
                 <div id="layoutSidenav_content">
                     <main>
                         <div class="container-fluid px-4">
-                            <h1 class="mt-4">Dashboard</h1>
+                            <h1 class="mt-4">User Detail</h1>
                             <ol class="breadcrumb mb-4">
                                 <li class="breadcrumb-item active">Dashboard</li>
                             </ol>
@@ -43,6 +43,11 @@
                                                 <li class="list-group-item">Phone: ${user.phone}</li>
                                                 <li class="list-group-item">Email: ${user.email}</li>
                                                 <li class="list-group-item">Address: ${user.address}</li>
+                                                <li class="list-group-item">Role: ${user.role.name}</li>
+                                                <li class="list-group-item">Avatar:
+                                                    <img class="img-fluid" width="200px" src="/avatar/${user.avatar}"
+                                                        alt="Avatar">
+                                                </li>
                                             </ul>
                                         </div>
                                         <a href="/admin/user" class="btn btn-success mt-3">Back</a>
