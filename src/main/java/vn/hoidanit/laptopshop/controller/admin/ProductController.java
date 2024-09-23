@@ -14,8 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
 import vn.hoidanit.laptopshop.domain.Product;
-import vn.hoidanit.laptopshop.domain.User;
-import vn.hoidanit.laptopshop.repository.ProductRepository;
 import vn.hoidanit.laptopshop.service.ProductService;
 import vn.hoidanit.laptopshop.service.UploadService;
 
@@ -35,6 +33,12 @@ public class ProductController {
         List<Product> products = this.productService.getAllProducts();
         model.addAttribute("products", products);
         return "admin/product/show";
+    }
+
+    @GetMapping("/admin/product/create")
+    public String createProductPage(Model model) {
+        model.addAttribute("newProduct", new Product());
+        return "admin/product/create";
     }
 
     @PostMapping("/admin/product/create")
