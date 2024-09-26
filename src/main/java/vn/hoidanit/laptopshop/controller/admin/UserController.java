@@ -11,10 +11,11 @@ import org.springframework.validation.FieldError;
 import vn.hoidanit.laptopshop.domain.User;
 import vn.hoidanit.laptopshop.service.UploadService;
 import vn.hoidanit.laptopshop.service.UserService;
+
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -64,17 +65,35 @@ public class UserController {
         return "admin/user/update";
     }
 
-    @RequestMapping("/admin/user/delete/{id}")
-    public String deleteUserById(Model model, @PathVariable long id) {
-        this.userService.deleteById(id);
+    @GetMapping("/admin/user/delete/{id}")
+    public String deleteUserByIdPage(Model model, @PathVariable long id) {
+        model.addAttribute("id", id);
+        model.addAttribute("newUser", new User());
+        return "/admin/user/delete";
+    }
+
+    @PostMapping("/admin/user/delete")
+    public String deleteUserById(Model model, @ModelAttribute("newUser") User duyanh) {
+        this.userService.deleteById(duyanh.getId());
         return "redirect:/admin/user";
     }
 
-    @RequestMapping(value = "/admin/user/update", method = RequestMethod.POST)
-    public String updateUserPage(Model model, @ModelAttribute("updateUser") User duyanh) {
+    @PostMapping(value = "/admin/user/update")
+    public String updateUserPage(Model model, @ModelAttribute("newUser") @Valid User duyanh,
+            BindingResult newUserBindingResult,
+            @RequestParam("hoidanitFile") MultipartFile file) {
+
+        if (newUserBindingResult.hasErrors()) {
+            return "/admin/user/update";
+        }
         User currentUser = this.userService.getUserById(duyanh.getId());
         if (currentUser != null) {
-            currentUser.setAddress(duyanh.getAddress());
+            if (!file.isEmpty()) {
+                String img = this.uploadService.handlerSaveUploadFile(file, "avatar");
+                currentUser.setAvatar(img);
+            }
+            String hashPassword = this.passwordEncoder.encode(duyanh.getPassword());
+            currentUser.setPassword(hashPassword);
             currentUser.setFullName(duyanh.getFullName());
             currentUser.setPhone(duyanh.getPhone());
             currentUser.setRole(this.userService.getRoleByName(duyanh.getRole().getName()));
