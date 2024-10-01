@@ -14,7 +14,6 @@ import vn.hoidanit.laptopshop.domain.CartDetail;
 import vn.hoidanit.laptopshop.domain.Product;
 import vn.hoidanit.laptopshop.domain.User;
 import vn.hoidanit.laptopshop.service.ProductService;
-import vn.hoidanit.laptopshop.service.UserService;
 
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -69,4 +68,13 @@ public class ItemController {
 
         return "client/cart/show";
     }
+
+    @PostMapping("/deleteProductInCart/{id}")
+    public String deleteProductInCart(Model model, @PathVariable long id, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        long idCartDetail = id;
+        this.productService.handleDeleteCartDetail(idCartDetail, session);
+        return "redirect:/cart";
+    }
+
 }
