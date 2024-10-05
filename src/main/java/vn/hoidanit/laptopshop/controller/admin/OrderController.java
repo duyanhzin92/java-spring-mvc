@@ -6,30 +6,31 @@ import java.util.Optional;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import vn.hoidanit.laptopshop.domain.Order;
-import vn.hoidanit.laptopshop.domain.Product;
-import vn.hoidanit.laptopshop.repository.OrderRepository;
+import vn.hoidanit.laptopshop.service.OrderService;
 
 @Controller
 public class OrderController {
-    private final OrderRepository orderRepository;
+    private final OrderService orderService;
 
-    public OrderController(OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
     }
 
     @GetMapping("/admin/order")
     public String getDashboard(Model model) {
-        List<Order> orders = this.orderRepository.findAll();
+        List<Order> orders = this.orderService.getAllOrder();
         model.addAttribute("orders", orders);
         return "admin/order/show";
     }
 
     @GetMapping("/admin/order/{id}")
     public String getOrderDetailPage(Model model, @PathVariable long id) {
-        Optional<Order> order = this.orderRepository.findById(id);
+        Optional<Order> order = this.orderService.getOrderById(id);
         Order currentOrder = new Order();
         if (order != null) {
             currentOrder = order.get();
@@ -38,5 +39,37 @@ public class OrderController {
         model.addAttribute("id", currentOrder.getId());
         model.addAttribute("orderDetails", currentOrder.getOrderDetails());
         return "admin/order/detail";
+    }
+
+    @GetMapping("/admin/order/update/{id}")
+    public String getOrderUpdatePage(Model model, @PathVariable long id) {
+        Optional<Order> order = this.orderService.getOrderById(id);
+        model.addAttribute("orderUpdate", order.get());
+        return "admin/order/update";
+    }
+
+    @PostMapping("/admin/order/update")
+    public String orderUpdate(Model model, @ModelAttribute("orderUpdate") Order od) {
+        Order order = this.orderService.getOrderById(od.getId()).get();
+
+        if (order != null) {
+            order.setStatus(od.getStatus());
+
+            this.orderService.updateOrderStatus(order);
+        }
+        return "redirect:/admin/order";
+    }
+
+    @GetMapping("/admin/order/delete/{id}")
+    public String getOrderDeletePage(Model model, @PathVariable long id) {
+        Optional<Order> order = this.orderService.getOrderById(id);
+        model.addAttribute("orderDelete", order.get());
+        return "admin/order/delete";
+    }
+
+    @PostMapping("/admin/order/delete")
+    public String deleteOrder(Model model, @ModelAttribute("orderDelete") Order od) {
+        this.orderService.deleteOrderById(od.getId());
+        return "redirect:/admin/order";
     }
 }

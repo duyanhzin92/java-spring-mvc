@@ -15,23 +15,27 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import vn.hoidanit.laptopshop.domain.Cart;
 import vn.hoidanit.laptopshop.domain.CartDetail;
+import vn.hoidanit.laptopshop.domain.Order;
 import vn.hoidanit.laptopshop.domain.Product;
 import vn.hoidanit.laptopshop.domain.User;
+import vn.hoidanit.laptopshop.service.OrderService;
 import vn.hoidanit.laptopshop.service.ProductService;
 
 @Controller
 public class ItemController {
 
     private final ProductService productService;
+    private final OrderService orderService;
 
-    public ItemController(ProductService productService) {
+    public ItemController(ProductService productService, OrderService orderService) {
         this.productService = productService;
+        this.orderService = orderService;
     }
 
     @GetMapping("/product/{id}")
     public String getProductPage(Model model, @PathVariable long id) {
         Product pr = this.productService.fetchProductById(id).get();
-        model.addAttribute("productDetail", pr);
+        model.addAttribute("product", pr);
         model.addAttribute("id", id);
         return "client/product/detail";
     }
@@ -43,9 +47,21 @@ public class ItemController {
         long productId = id;
         String email = (String) session.getAttribute("email");
 
-        this.productService.handleAddProductToCart(email, productId, session);
+        this.productService.handleAddProductToCart(email, productId, session, 1);
 
         return "redirect:/";
+    }
+
+    @PostMapping("/add-product-from-view-detail")
+    public String handleAddProductFromViewDetail(
+            @RequestParam("id") long id,
+            @RequestParam("quantity") long quantity,
+            HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        String email = (String) session.getAttribute("email");
+        this.productService.handleAddProductToCart(email, id, session, quantity);
+        return "redirect:/product/" + id;
     }
 
     @GetMapping("/cart")
@@ -122,4 +138,14 @@ public class ItemController {
         this.productService.handlePlaceOrder(user, session, receiverName, receiverAddress, receiverPhone);
         return "redirect:/";
     }
+
+    @GetMapping("/cart/history")
+    private String getHistoryOrderPage(Model model, HttpSession session) {
+        long id = (long) session.getAttribute("id");
+        List<Order> orders = this.orderService.getOrdersByUser(id);
+
+        model.addAttribute("orderDetails", orders);
+        return "client/cart/history";
+    }
+
 }
