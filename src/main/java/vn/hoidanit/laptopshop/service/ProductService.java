@@ -3,6 +3,9 @@ package vn.hoidanit.laptopshop.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import jakarta.servlet.http.HttpSession;
@@ -46,8 +49,13 @@ public class ProductService {
         return this.productRepository.findById(id);
     }
 
-    public List<Product> getAllProducts() {
-        return this.productRepository.findAll();
+    // private Specification<Product> nameLike(String name) {
+    // return (root, query, criteriaBuilder) ->
+    // criteriaBuilder.like(root.get(Product_.NAME), "%" + name + "%");
+    // }
+
+    public Page<Product> getAllProducts(Pageable page) {
+        return this.productRepository.findAll(page);
     }
 
     public void deleteProductById(long id) {

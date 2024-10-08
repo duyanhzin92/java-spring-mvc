@@ -2,6 +2,8 @@ package vn.hoidanit.laptopshop.service;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import vn.hoidanit.laptopshop.domain.Order;
@@ -29,8 +31,8 @@ public class OrderService {
         this.orderRepository.save(order);
     }
 
-    public List<Order> getAllOrder() {
-        return this.orderRepository.findAll();
+    public Page<Order> getAllOrder(Pageable page) {
+        return this.orderRepository.findAll(page);
     }
 
     public Optional<Order> getOrderById(long id) {
