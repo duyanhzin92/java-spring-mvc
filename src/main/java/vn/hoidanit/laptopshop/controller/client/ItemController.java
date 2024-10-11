@@ -48,8 +48,9 @@ public class ItemController {
         } catch (Exception e) {
             // TODO: handle exception
         }
+        String name = nameOptional.isPresent() ? nameOptional.get() : "";
         Pageable papPageable = PageRequest.of(page - 1, 6);
-        Page<Product> prs = this.productService.getAllProducts(papPageable);
+        Page<Product> prs = this.productService.getAllProductsWithSpec(papPageable, name);
         List<Product> listProducts = prs.getContent();
         model.addAttribute("products", listProducts);
         model.addAttribute("currentPage", page);

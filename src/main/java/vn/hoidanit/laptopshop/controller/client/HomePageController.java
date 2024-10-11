@@ -37,7 +37,8 @@ public class HomePageController {
     }
 
     @GetMapping("/")
-    public String getHomePage(Model model, @RequestParam("page") Optional<String> PageOptional) {
+    public String getHomePage(Model model,
+            @RequestParam("page") Optional<String> PageOptional) {
         int page = 1;
         try {
             if (PageOptional.isPresent())
